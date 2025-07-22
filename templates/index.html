@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LAN Drop File - Easier Share AnyFiles</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="main-container">
+        <div class="card left-card">
+            <h1>LAN Drop File</h1>
+            <div class="upload-section">
+                <h2>Kirim File</h2>
+                <form id="upload-form">
+                    <input type="file" name="file" required multiple>
+                    <button type="submit" id="upload-btn">Upload</button>
+                </form>
+            </div>
+            <div class="files-section">
+                <h2>File Tersedia</h2>
+                <ul id="file-list">
+                    {% for file in files %}
+                    <li id="file-{{ file }}">
+                        <span class="file-name">{{ file }}</span>
+                        <div class="file-info">
+                            <a href="/download/{{ file }}" download>Download</a>
+                            <button class="delete-btn" data-filename="{{ file }}">Hapus</button>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+                <p id="no-files-msg" class="files-placeholder {% if files %}hidden{% endif %}">Belum ada file.</p>
+            </div>
+        </div>
+        <div class="card right-card">
+            <h2>Scan untuk Terhubung</h2>
+            <div class="qr-code">
+                <img src="{{ url_for('static', filename='qr_code.png') }}" alt="QR Code to connect">
+                <p><strong>http://{{ local_ip }}:5000</strong></p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        © 2025 Riefki Nugraha. All Rights Reserved.
+    </footer>
+
+    <script>
+        const fileList = document.getElementById('file-list');
+        const noFilesMsg = document.getElementById('no-files-msg');
+        const eventSource = new EventSource("/stream");
+        function checkEmpty() { noFilesMsg.classList.toggle('hidden', fileList.children.length > 0); }
+        fileList.addEventListener('click', async (event) => {
+            if (event.target.classList.contains('delete-btn')) {
+                const filename = event.target.dataset.filename;
+                if (confirm(`Anda yakin ingin menghapus file "${filename}"?`)) {
+                    try { await fetch(`/delete/${filename}`, { method: 'POST' }); } catch (error) { alert('Gagal menghapus file.'); }
+                }
+            }
+        });
+        eventSource.addEventListener('new_file', (e) => {
+            const data = JSON.parse(e.data); const filename = data.filename; const newFileItem = document.createElement('li'); newFileItem.id = `file-${filename}`;
+            newFileItem.innerHTML = `<span class="file-name">${filename}</span><div class="file-info"><a href="/download/${filename}" download>Download</a><button class="delete-btn" data-filename="${filename}">Hapus</button></div>`;
+            fileList.prepend(newFileItem); checkEmpty();
+        });
+        eventSource.addEventListener('delete_file', (e) => {
+            const data = JSON.parse(e.data); const filename = data.filename; const fileElement = document.getElementById(`file-${filename}`);
+            if (fileElement) { fileElement.remove(); } checkEmpty();
+        });
+        checkEmpty();
+        const form = document.getElementById('upload-form'); const uploadBtn = document.getElementById('upload-btn');
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault(); uploadBtn.disabled = true; uploadBtn.textContent = 'Mengupload...'; const formData = new FormData(form);
+            try { const response = await fetch('/upload', { method: 'POST', body: formData }); if (!response.ok) { alert('Upload gagal!'); }
+            } catch (error) { alert('Terjadi kesalahan jaringan.'); } finally { form.reset(); uploadBtn.disabled = false; uploadBtn.textContent = 'Upload'; }
+        });
+    </script>
+</body>
+</html>
