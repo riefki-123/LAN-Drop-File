@@ -1,4 +1,4 @@
-# Portal - Real-time Local File Sharing
+# LAN File Drop - Real-time Local File Sharing
 
 Sebuah aplikasi web sederhana, cepat, dan real-time untuk berbagi file antar perangkat dalam satu jaringan Wi-Fi lokal. Dibangun dengan Python Flask, aplikasi ini memungkinkan transfer file secara langsung tanpa memerlukan koneksi internet atau instalasi aplikasi di sisi klien.
 
@@ -33,7 +33,7 @@ Ikuti langkah-langkah ini untuk menjalankan proyek secara lokal.
     Buka terminal atau Git Bash dan clone repositori ini.
     ```bash
     # Ganti dengan URL repositori Anda setelah diunggah ke GitHub
-    git clone [https://github.com/RiefkiNugraha/Portal-File-Sharing.git](https://github.com/RiefkiNugraha/Portal-File-Sharing.git)
+    git clone [https://github.com/riefki-123/LAN-Drop-File](https://github.com/riefki-123/LAN-Drop-File)
     ```
 
 2.  **Masuk ke Direktori Proyek**
