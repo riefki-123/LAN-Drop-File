@@ -32,7 +32,7 @@ Ikuti langkah-langkah ini untuk menjalankan proyek secara lokal.
 1.  **Clone Proyek**
     Buka terminal atau Git Bash dan clone repositori ini.
     ```bash
-    git clone [https://github.com/riefki-123/LAN-Drop-File](https://github.com/riefki-123/LAN-Drop-File)
+    git clone https://github.com/riefki-123/LAN-Drop-File
     ```
 
 2.  **Masuk ke Direktori Proyek**
